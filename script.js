@@ -48,7 +48,7 @@ const handleClick = (taskItemContent) => {
   const tasks = containerTasks.childNodes;
 
   for (const task of tasks){
-    const currentTaskIsBeingClicked = task.firstChild.isSameNode(taskItemContent);
+    const currentTaskIsBeingClicked = task.firstChild === (taskItemContent);
 
     if(currentTaskIsBeingClicked){
       task.firstChild.classList.toggle('taskFinalized');
@@ -62,7 +62,7 @@ const handleDeleteClick = (taskItemContent, taskItemContainer) => {
   const tasks = containerTasks.childNodes;
 
   for (const task of tasks){
-    const currentTaskIsBeingClicked = task.firstChild.isSameNode(taskItemContent);
+    const currentTaskIsBeingClicked = task.firstChild === (taskItemContent);
 
     if(currentTaskIsBeingClicked){
       taskItemContainer.remove();
@@ -88,7 +88,7 @@ const updateLocalStorage = () => {
 const refreshTaskUsingLocalStorage = () => {
   const tasksFromLocalStorage = JSON.parse(localStorage.getItem('tasks'));
 
-  if(!tasksFromLocalStorage) re.isSameNode
+  if(!tasksFromLocalStorage) return;
 
   for(const task of tasksFromLocalStorage){
     const taskItemContainer = document.createElement('div');

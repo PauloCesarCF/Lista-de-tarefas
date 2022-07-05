@@ -5,62 +5,118 @@ const containerTasks = document.querySelector('.container-tasks');
 const checkInput = () => inputTask.value.trim().length > 0;
 
 const newTask = () => {
-    const inputIsValid = checkInput();
+  const inputIsValid = checkInput();
 
-    if (!inputIsValid){
-        return inputTask.classList.add('erro');
-    }
+  if(!inputIsValid){
+    return inputTask.classList.add('erro');
+  }
 
-    if(inputIsValid){
-        inputTask.classList.remove('erro');
-    }
+  const taskItemContainer = document.createElement('div');
+  taskItemContainer.classList.add('task-item');
 
-    const taskItemContainer = document.createElement('div');
-    taskItemContainer.classList.add('task-item')
+  const taskItemContent = document.createElement('p');
+  taskItemContent.innerText = inputTask.value;
 
-    const taskContent = document.createElement('p');
-    taskContent.innerHTML = inputTask.value;
-    taskContent.style.padding = '5px';
+  taskItemContent.addEventListener('click', () => handleClick(taskItemContent));
 
-    taskContent.addEventListener('click', () => handleClick(taskContent));
+  const deleteItem = document.createElement('i');
+  deleteItem.classList.add('far');
+  deleteItem.classList.add('fa-trash-alt');
 
-    const deleteTask = document.createElement('i');
-    deleteTask.classList.add('far');
-    deleteTask.classList.add('fa-trash-alt');
+  deleteItem.addEventListener('click', () => handleDeleteClick(taskItemContent, taskItemContainer))
 
-    deleteTask.addEventListener('click', () => handleDeleteClick(taskItemContainer, taskContent));
+  taskItemContainer.appendChild(taskItemContent);
+  taskItemContainer.appendChild(deleteItem);
 
-    containerTasks.appendChild(taskItemContainer);
+  containerTasks.appendChild(taskItemContainer);
 
-    taskItemContainer.appendChild(taskContent);
-    taskItemContainer.appendChild(deleteTask);
+  inputTask.value = ''
+  inputTask.focus();
 
-    inputTask.value = ''
-    inputTask.focus();
+  updateLocalStorage();
 }
 
-const handleClick = (taskContent) => {
-    const tasks = containerTasks.childNodes;
-  
-    for (const task of tasks) {
-      const currentTaskIsBeingClicked = task.firstChild === (taskContent);
-  
-      if (currentTaskIsBeingClicked) {
-        task.firstChild.classList.toggle("completed");
-      }
-    }
-    };
-  
-const handleDeleteClick = (taskItemContainer, taskContent) => {
-    const tasks = containerTasks.childNodes;
-  
-    for (const task of tasks) {
-      const currentTaskIsBeingClicked = task.firstChild === (taskContent);
-  
-      if (currentTaskIsBeingClicked) {
-        taskItemContainer.remove();
-      }
-    }
-  };
+const handleInputChange = () => {
+  const inputIsValid = checkInput();
 
-saveTask.addEventListener('click', newTask);
+  if(inputIsValid){
+    return inputTask.classList.remove('erro');
+  }
+}
+
+const handleClick = (taskItemContent) => {
+  const tasks = containerTasks.childNodes;
+
+  for (const task of tasks){
+    const currentTaskIsBeingClicked = task.firstChild.isSameNode(taskItemContent);
+
+    if(currentTaskIsBeingClicked){
+      task.firstChild.classList.toggle('taskFinalized');
+    }
+  }
+
+  updateLocalStorage();
+}
+
+const handleDeleteClick = (taskItemContent, taskItemContainer) => {
+  const tasks = containerTasks.childNodes;
+
+  for (const task of tasks){
+    const currentTaskIsBeingClicked = task.firstChild.isSameNode(taskItemContent);
+
+    if(currentTaskIsBeingClicked){
+      taskItemContainer.remove();
+    }
+  }
+
+  updateLocalStorage();
+}
+
+const updateLocalStorage = () => {
+  const tasks = containerTasks.childNodes;
+
+  const localStorageTasks = [...tasks].map(task => {
+    const content = task.firstChild;
+    const iscompleted = content.classList.contains('taskFinalized');
+
+    return { description: content.innerText, iscompleted };
+  });
+
+  localStorage.setItem('tasks', JSON.stringify(localStorageTasks));
+}
+
+const refreshTaskUsingLocalStorage = () => {
+  const tasksFromLocalStorage = JSON.parse(localStorage.getItem('tasks'));
+
+  if(!tasksFromLocalStorage) re.isSameNode
+
+  for(const task of tasksFromLocalStorage){
+    const taskItemContainer = document.createElement('div');
+    taskItemContainer.classList.add('task-item');
+
+    const taskItemContent = document.createElement('p');
+    taskItemContent.innerText = task.description;
+
+    if(task.isCompleted){
+      taskItemContent.classList.add('taskFinalized')
+    }
+
+    taskItemContent.addEventListener('click', () => handleClick(taskItemContent));
+
+    const deleteItem = document.createElement('i');
+    deleteItem.classList.add('far');
+    deleteItem.classList.add('fa-trash-alt');
+
+    deleteItem.addEventListener('click', () => handleDeleteClick(taskItemContent, taskItemContainer)  )
+
+    taskItemContainer.appendChild(taskItemContent);
+    taskItemContainer.appendChild(deleteItem);
+
+    containerTasks.appendChild(taskItemContainer);
+    }
+}
+
+refreshTaskUsingLocalStorage();
+
+saveTask.addEventListener('click', () => newTask()); 
+inputTask.addEventListener('change', () => handleInputChange());

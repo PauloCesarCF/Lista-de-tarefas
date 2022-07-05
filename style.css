@@ -88,5 +88,5 @@ body{
 } 
 
 .taskFinalized{
-    text-decoration: underline;
+    text-decoration: line-through;
 }
